@@ -31,9 +31,18 @@ class FormController extends Controller
             'email.email' => 'Please enter a valid email address.',
             'phone.digits' => 'Phone number must be 10 digits.'
         ]);
-
-        Form::create($validated);
-        return back()->with('success', 'Form submitted successfully!');
+        if ($request->id) {
+            $form = Form::find($request->id);
+            if ($form) {
+                $form->update($validated);
+                return back()->with('success', 'Form updated successfully!');
+            } else {
+                return back()->with('error', 'Form not found.');
+            }
+        } else {
+            Form::create($validated);
+            return back()->with('success', 'Form submitted successfully!');
+        }
     }
 
 }
