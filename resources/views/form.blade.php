@@ -4,35 +4,9 @@
 <head>
     <title>Form</title>
     <link rel="stylesheet" href="{{ asset('css/form.css') }}">
-    <style>
-        .table-wrapper {
-            max-height: 400px;
-            overflow-y: auto;
-        }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous" />
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
-
-        button.edit-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            cursor: pointer;
-        }
-
-        button.edit-btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 
 <body>
@@ -40,12 +14,10 @@
         <div class="form-left">
             <h1 id="form-title">Submit Form</h1>
 
-            {{-- Show success message --}}
             @if(session('success'))
                 <p style="color:green;">{{ session('success') }}</p>
             @endif
 
-            {{-- Form --}}
             <form id="main-form" action="{{ route('form.handle') }}" method="POST">
                 @csrf
                 <input type="hidden" name="id" id="form-id" value="">
@@ -81,11 +53,27 @@
                 <button type="submit" id="submit-btn">Submit</button>
             </form>
         </div>
-        
+
         <div class="form-right">
+            <h2>Submitted Forms</h2>
+            <form action="{{ route('forms.index') }}" method="GET"
+                style="display: flex; gap: 10px; align-items: baseline;margin-bottom:10px;">
+
+                <input type="text" name="search" id="search" placeholder="Search by name or email"
+                    value="{{ request('search') }}" style="width: auto;">
+
+                <label>From:</label>
+                <input type="date" name="from_date" value="{{ request('from_date') }}" style="width: auto;">
+                <label>To:</label>
+                <input type="date" name="to_date" value="{{ request('to_date') }}" style="width: auto;">
+
+                <button type="submit"
+                    style=" background-color: #007BFF; color: white; border: none; cursor: pointer; width: 100px;">Filter</button>
+                <a href="{{ route('forms.index') }}"
+                    style="padding: 12px; background-color: gray; color: white; text-decoration: none; border-radius: 8px; width: auto;">Reset</a>
+            </form>
             @if($forms->count() > 0)
-                <h2>Submitted Forms</h2>
-                <div class="table-wrapper">
+                <div id="results" class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
@@ -95,7 +83,7 @@
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Submitted At</th>
-                                <th>Action</th>
+                                <th style="text-align: center;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -107,15 +95,46 @@
                                     <td>{{ $form->email }}</td>
                                     <td>{{ $form->phone ?? 'N/A' }}</td>
                                     <td>{{ $form->created_at }}</td>
-                                    <td>
-                                        <button type="button" class="edit-btn" 
-                                            data-id="{{ $form->id }}"
-                                            data-first_name="{{ $form->first_name }}"
-                                            data-last_name="{{ $form->last_name }}"
-                                            data-email="{{ $form->email }}"
-                                            data-phone="{{ $form->phone }}">
-                                            Edit
+                                    <td style="display: flex; flex-direction: row; gap: 10px;justify-content:center;">
+
+                                        <button type="button" class="edit-btn" data-id="{{ $form->id }}"
+                                            data-first_name="{{ $form->first_name }}" data-last_name="{{ $form->last_name }}"
+                                            data-email="{{ $form->email }}" data-phone="{{ $form->phone }}" style="
+                                                                                                                        background-color: #4CAF50;
+                                                                                                                        color: white;
+                                                                                                                        border: none;
+                                                                                                                        width: 36px;
+                                                                                                                        height: 36px;
+                                                                                                                        border-radius: 18px;
+                                                                                                                        display: flex;
+                                                                                                                        align-items: center;
+                                                                                                                        justify-content: center;
+                                                                                                                        cursor: pointer;
+                                                                                                                        font-size: 16px;
+                                                                                                                    ">
+                                            <i class="fas fa-pen"></i>
                                         </button>
+
+                                        <form action="{{ route('form.delete', $form->id) }}" method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="delete-btn" data-id="{{ $form->id }}"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal" style="background-color: red;
+                                                   color: white;
+                                                   border: none;
+                                                   width: 36px;
+                                                   height: 36px;
+                                                   border-radius: 18px;
+                                                   display: flex;
+                                                   align-items: center;
+                                                   justify-content: center;
+                                                   cursor: pointer;
+                                                   font-size: 16px;">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -123,7 +142,11 @@
                     </table>
                 </div>
             @else
-                <p>No forms submitted yet.</p>
+                @if($isFiltered)
+                    <p class="para">No results found for your search/filter.</p>
+                @else
+                    <p class="para">No forms submitted yet.</p>
+                @endif
             @endif
         </div>
     </div>
@@ -152,5 +175,75 @@
         });
     </script>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search');
+
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value;
+
+            fetch(`/forms/search?search=${query}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('results').innerHTML = html;
+                })
+                .catch(error => console.error(error));
+        });
+    });
+      document.addEventListener("DOMContentLoaded", () => {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    const deleteForm = document.getElementById("deleteForm");
+
+    deleteButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        let formId = btn.getAttribute("data-id");
+        deleteForm.action = `/form/${formId}`; 
+      });
+    });
+  });
+  document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("deleteModal");
+  const closeBtn = document.querySelector(".custom-modal .close");
+  const cancelBtn = document.getElementById("cancelBtn");
+  const deleteForm = document.getElementById("deleteForm");
+
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const formId = btn.getAttribute("data-id");
+      deleteForm.action = `/form/${formId}`;
+      modal.style.display = "flex";
+    });
+  });
+
+  closeBtn.addEventListener("click", () => modal.style.display = "none");
+  cancelBtn.addEventListener("click", () => modal.style.display = "none");
+
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+});
+
+</script>
+<div id="deleteModal" class="custom-modal">
+  <div class="custom-modal-content">
+    <span class="close">&times;</span>
+    <h3>Confirm Delete</h3>
+    <p>Are you sure you want to delete this form?</p>
+
+    <form id="deleteForm" method="POST" action="">
+      @csrf
+      @method('DELETE')
+      <div class="modal-actions">
+        <button type="button" id="cancelBtn">Cancel</button>
+        <button type="submit" class="danger">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 
 </html>
