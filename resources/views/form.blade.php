@@ -36,6 +36,21 @@
                 @enderror
                 <br><br>
 
+                <label>Designation:</label>
+                <select name="designation_id" id="designation_id">
+                    <option value="">Select Designation</option>
+                    @foreach($designations as $designation)
+                        <option value="{{ $designation->id }}">
+                            {{ $designation->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('designation_id')
+                    <p style="color:red;">{{ $message }}</p>
+                @enderror
+                <br><br>
+
+
                 <label>Email:</label>
                 <input type="email" name="email" id="email" value="{{ old('email') }}">
                 @error('email')
@@ -83,6 +98,7 @@
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Submitted At</th>
+                                <th>Designation</th>
                                 <th style="text-align: center;">Action</th>
                             </tr>
                         </thead>
@@ -95,23 +111,25 @@
                                     <td>{{ $form->email }}</td>
                                     <td>{{ $form->phone ?? 'N/A' }}</td>
                                     <td>{{ $form->created_at }}</td>
+                                    <td>{{ $form->designation->name}}</td>
                                     <td style="display: flex; flex-direction: row; gap: 10px;justify-content:center;">
 
                                         <button type="button" class="edit-btn" data-id="{{ $form->id }}"
                                             data-first_name="{{ $form->first_name }}" data-last_name="{{ $form->last_name }}"
-                                            data-email="{{ $form->email }}" data-phone="{{ $form->phone }}" style="
-                                                                                                                        background-color: #4CAF50;
-                                                                                                                        color: white;
-                                                                                                                        border: none;
-                                                                                                                        width: 36px;
-                                                                                                                        height: 36px;
-                                                                                                                        border-radius: 18px;
-                                                                                                                        display: flex;
-                                                                                                                        align-items: center;
-                                                                                                                        justify-content: center;
-                                                                                                                        cursor: pointer;
-                                                                                                                        font-size: 16px;
-                                                                                                                    ">
+                                            data-email="{{ $form->email }}" data-phone="{{ $form->phone }}"
+                                            style="
+                                                                                                                                                background-color: #4CAF50;
+                                                                                                                                                color: white;
+                                                                                                                                                border: none;
+                                                                                                                                                width: 36px;
+                                                                                                                                                height: 36px;
+                                                                                                                                                border-radius: 18px;
+                                                                                                                                                display: flex;
+                                                                                                                                                align-items: center;
+                                                                                                                                                justify-content: center;
+                                                                                                                                                cursor: pointer;
+                                                                                                                                                font-size: 16px;
+                                                                                                                                            ">
                                             <i class="fas fa-pen"></i>
                                         </button>
 
@@ -121,16 +139,16 @@
                                             @method('DELETE')
                                             <button type="button" class="delete-btn" data-id="{{ $form->id }}"
                                                 data-bs-toggle="modal" data-bs-target="#deleteModal" style="background-color: red;
-                                                   color: white;
-                                                   border: none;
-                                                   width: 36px;
-                                                   height: 36px;
-                                                   border-radius: 18px;
-                                                   display: flex;
-                                                   align-items: center;
-                                                   justify-content: center;
-                                                   cursor: pointer;
-                                                   font-size: 16px;">
+                                                                           color: white;
+                                                                           border: none;
+                                                                           width: 36px;
+                                                                           height: 36px;
+                                                                           border-radius: 18px;
+                                                                           display: flex;
+                                                                           align-items: center;
+                                                                           justify-content: center;
+                                                                           cursor: pointer;
+                                                                           font-size: 16px;">
                                                 <i class="fas fa-trash"></i>
                                             </button>
 
@@ -192,57 +210,57 @@
                 .catch(error => console.error(error));
         });
     });
-      document.addEventListener("DOMContentLoaded", () => {
-    const deleteButtons = document.querySelectorAll(".delete-btn");
-    const deleteForm = document.getElementById("deleteForm");
+    document.addEventListener("DOMContentLoaded", () => {
+        const deleteButtons = document.querySelectorAll(".delete-btn");
+        const deleteForm = document.getElementById("deleteForm");
 
-    deleteButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        let formId = btn.getAttribute("data-id");
-        deleteForm.action = `/form/${formId}`; 
-      });
+        deleteButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                let formId = btn.getAttribute("data-id");
+                deleteForm.action = `/form/${formId}`;
+            });
+        });
     });
-  });
-  document.addEventListener("DOMContentLoaded", () => {
-  const modal = document.getElementById("deleteModal");
-  const closeBtn = document.querySelector(".custom-modal .close");
-  const cancelBtn = document.getElementById("cancelBtn");
-  const deleteForm = document.getElementById("deleteForm");
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("deleteModal");
+        const closeBtn = document.querySelector(".custom-modal .close");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const deleteForm = document.getElementById("deleteForm");
 
-  document.querySelectorAll(".delete-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const formId = btn.getAttribute("data-id");
-      deleteForm.action = `/form/${formId}`;
-      modal.style.display = "flex";
+        document.querySelectorAll(".delete-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const formId = btn.getAttribute("data-id");
+                deleteForm.action = `/form/${formId}`;
+                modal.style.display = "flex";
+            });
+        });
+
+        closeBtn.addEventListener("click", () => modal.style.display = "none");
+        cancelBtn.addEventListener("click", () => modal.style.display = "none");
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        });
     });
-  });
-
-  closeBtn.addEventListener("click", () => modal.style.display = "none");
-  cancelBtn.addEventListener("click", () => modal.style.display = "none");
-
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.style.display = "none";
-    }
-  });
-});
 
 </script>
 <div id="deleteModal" class="custom-modal">
-  <div class="custom-modal-content">
-    <span class="close">&times;</span>
-    <h3>Confirm Delete</h3>
-    <p>Are you sure you want to delete this form?</p>
+    <div class="custom-modal-content">
+        <span class="close">&times;</span>
+        <h3>Confirm Delete</h3>
+        <p>Are you sure you want to delete this form?</p>
 
-    <form id="deleteForm" method="POST" action="">
-      @csrf
-      @method('DELETE')
-      <div class="modal-actions">
-        <button type="button" id="cancelBtn">Cancel</button>
-        <button type="submit" class="danger">Delete</button>
-      </div>
-    </form>
-  </div>
+        <form id="deleteForm" method="POST" action="">
+            @csrf
+            @method('DELETE')
+            <div class="modal-actions">
+                <button type="button" id="cancelBtn">Cancel</button>
+                <button type="submit" class="danger">Delete</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 

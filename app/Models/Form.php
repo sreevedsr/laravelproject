@@ -11,6 +11,12 @@ protected $fillable = [
     'last_name',
     'email',
     'phone',
+    'designation_id',
 ];
+public function designation()
+    {
+        return $this->belongsTo(Designation::class);
+    }
+
 }
 
