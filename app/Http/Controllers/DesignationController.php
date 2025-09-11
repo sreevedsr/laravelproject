@@ -38,4 +38,12 @@ class DesignationController extends Controller
         }
         return back()->with('error', 'Designation not found.');
     }
+
+    public function create()
+    {
+        // if you need to pass data (like list of designations), do it here
+        $designations = Designation::all();
+
+        return view('designations.create', compact('designations'));
+    }
 }

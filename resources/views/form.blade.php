@@ -85,7 +85,7 @@
                 <button type="submit"
                     style=" background-color: #007BFF; color: white; border: none; cursor: pointer; width: 100px;">Filter</button>
                 <a href="{{ route('forms.index') }}"
-                    style="padding: 12px; background-color: gray; color: white; text-decoration: none; border-radius: 8px; width: auto;">Reset</a>
+                style="padding: 12px; background-color: gray; color: white; text-decoration: none; border-radius: 8px; width: auto;">Reset</a>
             </form>
             @if($forms->count() > 0)
                 <div id="results" class="table-wrapper">
@@ -116,20 +116,7 @@
 
                                         <button type="button" class="edit-btn" data-id="{{ $form->id }}"
                                             data-first_name="{{ $form->first_name }}" data-last_name="{{ $form->last_name }}"
-                                            data-email="{{ $form->email }}" data-phone="{{ $form->phone }}"
-                                            style="
-                                                                                                                                                background-color: #4CAF50;
-                                                                                                                                                color: white;
-                                                                                                                                                border: none;
-                                                                                                                                                width: 36px;
-                                                                                                                                                height: 36px;
-                                                                                                                                                border-radius: 18px;
-                                                                                                                                                display: flex;
-                                                                                                                                                align-items: center;
-                                                                                                                                                justify-content: center;
-                                                                                                                                                cursor: pointer;
-                                                                                                                                                font-size: 16px;
-                                                                                                                                            ">
+                                            data-email="{{ $form->email }}" data-phone="{{ $form->phone }}">
                                             <i class="fas fa-pen"></i>
                                         </button>
 
@@ -138,17 +125,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="delete-btn" data-id="{{ $form->id }}"
-                                                data-bs-toggle="modal" data-bs-target="#deleteModal" style="background-color: red;
-                                                                           color: white;
-                                                                           border: none;
-                                                                           width: 36px;
-                                                                           height: 36px;
-                                                                           border-radius: 18px;
-                                                                           display: flex;
-                                                                           align-items: center;
-                                                                           justify-content: center;
-                                                                           cursor: pointer;
-                                                                           font-size: 16px;">
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal">
                                                 <i class="fas fa-trash"></i>
                                             </button>
 
