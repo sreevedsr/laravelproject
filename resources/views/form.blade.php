@@ -145,6 +145,20 @@
             @endif
         </div>
     </div>
+    <form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit" 
+            style="background-color: #e74c3c; 
+                   color: white; 
+                   border: none; 
+                   padding: 10px 20px; 
+                   border-radius: 5px; 
+                   cursor: pointer;
+                   font-size: 16px;">
+        Logout
+    </button>
+</form>
+
 
     <script>
         const editButtons = document.querySelectorAll('.edit-btn');

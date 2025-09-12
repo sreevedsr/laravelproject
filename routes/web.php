@@ -11,14 +11,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/forms', [FormController::class, 'showForm'])->name('forms.index');
     Route::get('/forms/search', [FormController::class, 'search'])->name('forms.search');
 
-    // Designation management
     Route::get('/admin/designations', [DesignationController::class, 'index'])->name('designations.index');
     Route::post('/admin/designations', [DesignationController::class, 'store'])->name('designations.store');
     Route::delete('/admin/designations/{id}', [DesignationController::class, 'destroy'])->name('designations.destroy');
     Route::get('/designations/create', [DesignationController::class, 'create'])->name('designations.create');
 
+    Route::middleware(['auth', 'role:admin'])->group(callback: function () {
+    Route::get('/designations/create', [DesignationController::class, 'create'])->name('designations.create');
+    Route::post('/admin/designations', [DesignationController::class, 'store'])->name('designations.store');
+    Route::delete('/admin/designations/{id}', [DesignationController::class, 'destroy'])->name('designations.destroy');
+});
+
+
     // Logout
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+
 });
 Route::get('/form', [FormController::class, 'showForm'])->name('form.show');
 

@@ -27,7 +27,8 @@ class AuthController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // hash password
+            'password' => Hash::make($request->password),
+            'role' => 'user',
         ]);
 
         return redirect()->route('login.form')->with('success', 'Registration successful. You can login now.');
@@ -46,13 +47,17 @@ class AuthController extends Controller
 
         
     $remember = $request->has('remember');
+
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            return redirect()->route('designations.create')
-                ->with('success', 'Welcome back!');
-        }
 
+            if (Auth::user()->role === 'admin') {
+            return redirect()->route('designations.create')->with('success', 'Welcome back, Admin!');
+        } else {
+            return redirect()->route('forms.index')->with('success', 'Welcome back!');
+        }
+    }
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ]);
