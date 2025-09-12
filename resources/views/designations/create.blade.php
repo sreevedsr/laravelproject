@@ -8,9 +8,6 @@
             width: 100%;
             border-collapse: collapse;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
         th, td {
             padding: 8px;
             text-align: left;
@@ -23,6 +20,8 @@
             background: none;
             border: none;
             cursor: pointer;
+            border-radius: 8px;
+            width: 100px;
         }
     </style>
 </head>
@@ -55,7 +54,7 @@
                         <th>ID</th>
                         <th>Designation</th>
                         <th>Created At</th>
-                        <th>Action</th>
+                        <th style="text-align: center;padding-left: 10px">Action</th>
                     </tr>
                 </thead>
                 <tbody>

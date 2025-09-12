@@ -36,7 +36,7 @@
         button {
             width: 100%;
             padding: 12px;
-            background: #0056b3;
+            background: #2563eb;
             color: #fff;
             border: none;
             border-radius: 6px;
@@ -44,7 +44,7 @@
             font-size: 16px;
         }
         button:hover {
-            background: #45a049;
+            background: #0056b3;
         }
         .message {
             margin-bottom: 15px;

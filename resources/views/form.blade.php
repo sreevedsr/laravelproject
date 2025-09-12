@@ -109,14 +109,14 @@
                                     <td>{{ $form->first_name }}</td>
                                     <td>{{ $form->last_name }}</td>
                                     <td>{{ $form->email }}</td>
-                                    <td>{{ $form->phone ?? 'N/A' }}</td>
+                                    <td>{{ $form->phone }}</td>
                                     <td>{{ $form->created_at }}</td>
                                     <td>{{ $form->designation->name}}</td>
                                     <td style="display: flex; flex-direction: row; gap: 10px;justify-content:center;">
 
                                         <button type="button" class="edit-btn" data-id="{{ $form->id }}"
                                             data-first_name="{{ $form->first_name }}" data-last_name="{{ $form->last_name }}"
-                                            data-email="{{ $form->email }}" data-phone="{{ $form->phone }}">
+                                            data-designation_id="{{ $form->designation_id }}" data-email="{{ $form->email }}" data-phone="{{ $form->phone }}">
                                             <i class="fas fa-pen"></i>
                                         </button>
 
@@ -155,12 +155,14 @@
                 const id = button.getAttribute('data-id');
                 const firstName = button.getAttribute('data-first_name');
                 const lastName = button.getAttribute('data-last_name');
+                const designation = button.getAttribute('data-designation_id');
                 const email = button.getAttribute('data-email');
                 const phone = button.getAttribute('data-phone');
 
                 document.getElementById('form-id').value = id;
                 document.getElementById('first_name').value = firstName;
                 document.getElementById('last_name').value = lastName;
+                document.getElementById('designation_id').value = designation;
                 document.getElementById('email').value = email;
                 document.getElementById('phone').value = phone;
 
